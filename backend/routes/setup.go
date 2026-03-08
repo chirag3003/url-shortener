@@ -41,7 +41,6 @@ func Setup(app *fiber.App, controllers *controller.Controllers, jwtService *auth
 
 	// Link routes
 	linksPublic := v1.Group("/links")
-	linksPublic.Post("/quick", controllers.Link.Create)
 	linksPublic.Get("/alias-availability", controllers.Link.AliasAvailability)
 
 	linksProtected := v1.Group("/links", authMiddleware)

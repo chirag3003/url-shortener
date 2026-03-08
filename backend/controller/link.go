@@ -27,13 +27,9 @@ func (c *LinkController) Create(ctx fiber.Ctx) error {
 		return apperror.BadRequest("invalid request body")
 	}
 
-	var userID *int64
-	if raw, ok := ctx.Locals("userID").(string); ok && raw != "" {
-		parsed, err := strconv.ParseInt(raw, 10, 64)
-		if err != nil {
-			return apperror.Unauthorized("invalid authenticated user id")
-		}
-		userID = &parsed
+	userID, err := parseUserID(ctx)
+	if err != nil {
+		return err
 	}
 
 	res, err := c.linkService.Create(ctx.Context(), userID, &req)

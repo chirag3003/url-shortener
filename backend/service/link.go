@@ -41,7 +41,7 @@ func NewLinkService(linkRepo repository.LinkRepository, baseURL string, log zero
 }
 
 // Create creates a short link.
-func (s *LinkService) Create(ctx context.Context, userID *int64, req *request.CreateLinkRequest) (*response.LinkResponse, error) {
+func (s *LinkService) Create(ctx context.Context, userID int64, req *request.CreateLinkRequest) (*response.LinkResponse, error) {
 	if err := validate.Struct(req); err != nil {
 		return nil, apperror.ValidationError(err.Error())
 	}
@@ -100,7 +100,7 @@ func (s *LinkService) Create(ctx context.Context, userID *int64, req *request.Cr
 
 	link := &models.Link{
 		ID:           linkID,
-		UserID:       userID,
+		UserID:       &userID,
 		LongURL:      req.LongURL,
 		ShortCode:    shortCode,
 		RedirectType: redirectType,

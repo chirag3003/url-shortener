@@ -21,7 +21,6 @@ This project runs two distinct services:
 - `PATCH /api/v1/user/me` - Update user profile information.
 
 ## Links (API Service)
-- `POST /api/v1/links/quick` - Public quick shortener (guest flow).
 - `GET /api/v1/links/alias-availability` - Check alias availability.
 - `POST /api/v1/links` - Create short link (authenticated).
 - `GET /api/v1/links` - List current user's links.

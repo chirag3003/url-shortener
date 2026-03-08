@@ -42,6 +42,9 @@ func TestCreateLink_Parsing(t *testing.T) {
 				if tc.expiresAt != "" && l.ExpiresAt == nil {
 					t.Error("expected expiresAt to be parsed, got nil")
 				}
+				if l.UserID == nil || *l.UserID != userID {
+					t.Errorf("expected userID %d, got %v", userID, l.UserID)
+				}
 				return nil
 			})
 			linkRepo.EXPECT().GetLinkByID(gomock.Any(), gomock.Any()).Return(&models.Link{
@@ -56,7 +59,7 @@ func TestCreateLink_Parsing(t *testing.T) {
 				ExpiresAt:    tc.expiresAt,
 				RedirectType: tc.redirectType,
 			}
-			_, err := svc.Create(context.Background(), &userID, req)
+			_, err := svc.Create(context.Background(), userID, req)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
@@ -78,7 +81,7 @@ func TestCreateLink_InvalidDate(t *testing.T) {
 
 	linkRepo.EXPECT().AliasExists(gomock.Any(), gomock.Any()).Return(false, nil)
 
-	_, err := svc.Create(context.Background(), &userID, req)
+	_, err := svc.Create(context.Background(), userID, req)
 	if err == nil {
 		t.Fatal("expected error for invalid date, got nil")
 	}
