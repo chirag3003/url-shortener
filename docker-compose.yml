@@ -5,11 +5,17 @@ services:
     command: ./server
     ports:
       - "5010:5000"
-    env_file:
-      - ./backend/.env
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
-      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - JWT_SECRET=${JWT_SECRET:-change-this-to-a-secure-random-string}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-24h}
+      - CORS_ALLOW_ORIGINS=${CORS_ALLOW_ORIGINS:-*}
+      - BASE_URL=${BASE_URL:-http://localhost:5010}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - HYPERFLAKE_DATACENTER_ID=${HYPERFLAKE_DATACENTER_ID:-1}
+      - HYPERFLAKE_MACHINE_ID=${HYPERFLAKE_MACHINE_ID:-1}
+      - HYPERFLAKE_EPOCH_MS=${HYPERFLAKE_EPOCH_MS:-0}
     depends_on:
       postgres:
         condition: service_healthy
@@ -23,12 +29,11 @@ services:
     command: ./redirect
     ports:
       - "5011:5001"
-    env_file:
-      - ./backend/.env
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
-      - REDIS_URL=redis://redis:6379
-      - BASE_URL=http://localhost:5001
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - BASE_URL=${BASE_URL:-http://localhost:5011}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,7 +47,7 @@ services:
     ports:
       - "3010:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:5010}
     depends_on:
       - go-backend
     restart: unless-stopped
