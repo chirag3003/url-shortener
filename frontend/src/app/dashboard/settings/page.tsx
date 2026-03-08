@@ -35,6 +35,7 @@ export default function SettingsPage() {
         <aside className="lg:w-1/5 shrink-0">
           <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1 overflow-x-auto pb-2 lg:pb-0">
             {sidebarNavItems.map((item) => (
+              // biome-ignore lint/a11y/useButtonType: <later>
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}

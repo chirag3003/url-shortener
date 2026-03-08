@@ -31,7 +31,7 @@ function formatDate(iso: string) {
 
 function truncateUrl(url: string, maxLen = 50) {
   if (url.length <= maxLen) return url;
-  return url.substring(0, maxLen) + "…";
+  return `${url.substring(0, maxLen)}…`;
 }
 
 interface LinksTableProps {

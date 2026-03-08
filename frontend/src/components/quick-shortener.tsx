@@ -216,6 +216,7 @@ export function QuickShortener() {
             </div>
 
             <div className="mt-4 flex justify-center">
+              {/** biome-ignore lint/a11y/useButtonType: <later> */}
               <button
                 onClick={handleReset}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"

@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { mockLinks } from "@/lib/mock-data";
 import type { LinkResponse } from "@/lib/validators/link";
 import { LinksHeader } from "./_components/links-header";
@@ -54,26 +53,7 @@ function EmptyState() {
   );
 }
 
-// ── Skeleton Loader ──────────────────────────────────────────────────────
-
-function TableSkeleton() {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4 py-3">
-          <Skeleton className="h-4 w-[200px]" />
-          <Skeleton className="h-4 w-[120px]" />
-          <Skeleton className="h-4 w-[80px]" />
-          <Skeleton className="h-4 w-[60px]" />
-          <Skeleton className="h-4 w-[28px]" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── Page ─────────────────────────────────────────────────────────────────
-
 export default function LinksPage() {
   const [search, setSearch] = useState("");
   const [links, setLinks] = useState<LinkResponse[]>(mockLinks);

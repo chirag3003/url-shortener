@@ -7,13 +7,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import type { LoginInput } from "@/lib/validators/auth";
 import { loginSchema, registerSchema } from "@/lib/validators/auth";
 import { FieldError } from "./auth/field-error";
