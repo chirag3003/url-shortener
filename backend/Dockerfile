@@ -13,8 +13,11 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build the binary
+# Build the server binary
 RUN CGO_ENABLED=1 go build -o /app/server ./cmd/server
+
+# Build the redirect binary
+RUN CGO_ENABLED=1 go build -o /app/redirect ./cmd/redirect
 
 # Runtime stage
 FROM debian:bookworm-slim
@@ -26,16 +29,14 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Copy binary from builder
+# Copy binaries from builder
 COPY --from=builder /app/server .
+COPY --from=builder /app/redirect .
 
 # Create non-root user
 RUN useradd -r -s /bin/false appuser
 USER appuser
 
-EXPOSE 5000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD ["./server", "--health"] || exit 1
+EXPOSE 5000 5001
 
 CMD ["./server"]

@@ -58,7 +58,4 @@ func Setup(app *fiber.App, controllers *controller.Controllers, jwtService *auth
 	// Media routes (protected)
 	mediaGroup := v1.Group("/media", authMiddleware)
 	mediaGroup.Post("/upload", controllers.Media.Upload)
-
-	// Public redirect route (registered last to avoid conflicts)
-	app.Get("/:code", controllers.Redirect.Redirect)
 }

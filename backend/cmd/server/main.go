@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
@@ -16,6 +17,7 @@ import (
 	"github.com/chirag3003/go-backend-template/pkg/cache"
 	"github.com/chirag3003/go-backend-template/pkg/idgen"
 	"github.com/chirag3003/go-backend-template/pkg/logger"
+	"github.com/chirag3003/go-backend-template/pkg/messaging"
 	"github.com/chirag3003/go-backend-template/repository"
 	"github.com/chirag3003/go-backend-template/routes"
 	"github.com/chirag3003/go-backend-template/service"
@@ -24,6 +26,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/limiter"
 	"github.com/gofiber/storage/redis/v3"
 	"github.com/joho/godotenv"
+	redisclient "github.com/redis/go-redis/v9"
 	"time"
 )
 
@@ -81,6 +84,19 @@ func main() {
 	mediaService := service.NewMediaService(repo.Media, repo.S3, cfg, log)
 	linkService := service.NewLinkService(repo.Link, cfg.BaseURL, log)
 	analyticsService := service.NewAnalyticsService(repo.Click, repo.Link, log)
+
+	// Start Analytics Worker
+	rClient := redisclient.NewClient(&redisclient.Options{Addr: cfg.RedisURL})
+	streamManager := messaging.NewStreamManager(rClient)
+	streamManager.EnsureGroup(context.Background(), messaging.AnalyticsStream, messaging.AnalyticsGroup)
+	go streamManager.Consume(context.Background(), messaging.AnalyticsStream, messaging.AnalyticsGroup, "api-server-1", func(data []byte) error {
+		var payload messaging.AnalyticsPayload
+		if err := json.Unmarshal(data, &payload); err != nil {
+			return err
+		}
+		analyticsService.RecordClick(context.Background(), payload.LinkID, payload.IP, payload.UserAgent, payload.Referrer)
+		return nil
+	})
 
 	// Initialize controllers
 	controllers := controller.NewControllers(

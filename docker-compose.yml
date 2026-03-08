@@ -2,13 +2,33 @@ services:
   go-backend:
     build: ./backend
     container_name: go-backend
+    command: ./server
     ports:
       - "5000:5000"
     env_file:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  redirect-service:
+    build: ./backend
+    container_name: redirect-service
+    command: ./redirect
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
+      - REDIS_URL=redis:6379
+      - BASE_URL=http://localhost:5001
     depends_on:
       postgres:
         condition: service_healthy
