@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
@@ -75,9 +76,24 @@ func (s *LinkService) Create(ctx context.Context, userID *int64, req *request.Cr
 
 	var expiresAt *time.Time
 	if req.ExpiresAt != "" {
-		t, err := time.Parse(time.RFC3339, req.ExpiresAt)
-		if err != nil {
-			return nil, apperror.BadRequest("expiresAt must be a valid RFC3339 timestamp")
+		// Try multiple ISO 8601 / RFC 3339 formats commonly sent by frontends
+		formats := []string{
+			time.RFC3339,
+			"2006-01-02T15:04:05Z07:00",
+			"2006-01-02T15:04:05.000Z",
+			"2006-01-02T15:04:05",
+			"2006-01-02",
+		}
+		var t time.Time
+		var parseErr error
+		for _, f := range formats {
+			t, parseErr = time.Parse(f, req.ExpiresAt)
+			if parseErr == nil {
+				break
+			}
+		}
+		if parseErr != nil {
+			return nil, apperror.BadRequest("expiresAt must be a valid ISO 8601/RFC3339 timestamp")
 		}
 		expiresAt = &t
 	}
@@ -180,9 +196,24 @@ func (s *LinkService) Update(ctx context.Context, userID int64, linkID int64, re
 		link.RedirectType = req.RedirectType
 	}
 	if req.ExpiresAt != "" {
-		t, err := time.Parse(time.RFC3339, req.ExpiresAt)
-		if err != nil {
-			return nil, apperror.BadRequest("expiresAt must be a valid RFC3339 timestamp")
+		// Try multiple ISO 8601 / RFC 3339 formats commonly sent by frontends
+		formats := []string{
+			time.RFC3339,
+			"2006-01-02T15:04:05Z07:00",
+			"2006-01-02T15:04:05.000Z",
+			"2006-01-02T15:04:05",
+			"2006-01-02",
+		}
+		var t time.Time
+		var parseErr error
+		for _, f := range formats {
+			t, parseErr = time.Parse(f, req.ExpiresAt)
+			if parseErr == nil {
+				break
+			}
+		}
+		if parseErr != nil {
+			return nil, apperror.BadRequest("expiresAt must be a valid ISO 8601/RFC3339 timestamp")
 		}
 		link.ExpiresAt = &t
 	}
@@ -254,14 +285,13 @@ func (s *LinkService) ResolveForRedirect(ctx context.Context, code string) (*mod
 	// 1. Try Cache
 	cached, err := cache.Get(ctx, "link:"+code)
 	if err == nil && cached != "" {
-		// For now, we store just the URL in cache for simplicity in this prototype.
-		// In a full implementation, we'd store a JSON of models.Link to handle RedirectType, etc.
-		return &models.Link{
-			LongURL:      cached,
-			ShortCode:    code,
-			RedirectType: 302,
-			IsActive:     true,
-		}, nil
+		var link models.Link
+		if err := json.Unmarshal([]byte(cached), &link); err == nil {
+			if link.IsActive && (link.ExpiresAt == nil || time.Now().Before(*link.ExpiresAt)) {
+				return &link, nil
+			}
+			// If cached link is invalid, proceed to DB to be sure
+		}
 	}
 
 	// 2. Try DB
@@ -277,7 +307,9 @@ func (s *LinkService) ResolveForRedirect(ctx context.Context, code string) (*mod
 	}
 
 	// 3. Populate Cache (TTL 1 hour)
-	_ = cache.Set(ctx, "link:"+code, link.LongURL, 1*time.Hour)
+	if data, err := json.Marshal(link); err == nil {
+		_ = cache.Set(ctx, "link:"+code, string(data), 1*time.Hour)
+	}
 
 	return link, nil
 }
