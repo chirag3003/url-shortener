@@ -5,12 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLinks } from "@/hooks/use-links";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const { data, isLoading } = useLinks({ limit: 4 });
   
   const links = data?.items ?? [];
   const total = data?.total ?? 0;
+
+  const handleCopy = (shortUrl: string) => {
+    navigator.clipboard.writeText(shortUrl);
+    toast.success("Link copied!");
+  };
 
   const overviewStats = [
     {
@@ -179,8 +185,8 @@ export default function DashboardPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-primary truncate font-mono">
-                        /{link.shortCode}
+                      <p className="text-sm font-semibold text-primary truncate font-mono cursor-pointer" onClick={() => {handleCopy(link.shortUrl)}}>
+                        {link.shortUrl}
                       </p>
                       <Badge
                         variant={link.isActive ? "default" : "secondary"}
