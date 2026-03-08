@@ -23,11 +23,11 @@ type Config struct {
 	JWTExpiration time.Duration `env:"JWT_EXPIRATION" envDefault:"24h"`
 
 	// AWS S3
-	S3AccessKey string `env:"S3_ACCESS_KEY,required"`
-	S3SecretKey string `env:"S3_SECRET_KEY,required"`
-	S3Region    string `env:"S3_REGION,required"`
-	S3Bucket    string `env:"S3_BUCKET,required"`
-	S3Endpoint  string `env:"S3_ENDPOINT,required"`
+	S3AccessKey string `env:"S3_ACCESS_KEY"`
+	S3SecretKey string `env:"S3_SECRET_KEY"`
+	S3Region    string `env:"S3_REGION" envDefault:"ap-south-1"`
+	S3Bucket    string `env:"S3_BUCKET"`
+	S3Endpoint  string `env:"S3_ENDPOINT" envDefault:"s3.ap-south-1.amazonaws.com"`
 	S3Folder    string `env:"S3_FOLDER" envDefault:"images"`
 
 	// CORS
