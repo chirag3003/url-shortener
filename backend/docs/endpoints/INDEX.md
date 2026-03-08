@@ -18,6 +18,7 @@ This project runs two distinct services:
 
 ## User (API Service)
 - `GET /api/v1/user/me` - Get authenticated user profile.
+- `PATCH /api/v1/user/me` - Update user profile information.
 
 ## Links (API Service)
 - `POST /api/v1/links/quick` - Public quick shortener (guest flow).

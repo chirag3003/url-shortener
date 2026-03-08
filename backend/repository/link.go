@@ -208,6 +208,7 @@ func (r *linkRepository) AliasExists(ctx context.Context, alias string) (bool, e
 type ClickRepository interface {
 	CreateClick(ctx context.Context, click *models.ClickEvent) error
 	GetSummary(ctx context.Context, linkID int64) (total int64, unique int64, last24h int64, last7d int64, err error)
+	GetPreviousSummary(ctx context.Context, linkID int64) (prevTotal int64, prevUnique int64, prev24h int64, prev7d int64, err error)
 	GetTimeSeries(ctx context.Context, linkID int64, window string) ([]TimeSeriesPoint, error)
 	GetTopBreakdown(ctx context.Context, linkID int64, field string, limit int) ([]BreakdownRow, error)
 }
@@ -273,6 +274,27 @@ func (r *clickRepository) GetSummary(ctx context.Context, linkID int64) (int64, 
 		return 0, 0, 0, 0, err
 	}
 	return total, unique, last24h, last7d, nil
+}
+
+func (r *clickRepository) GetPreviousSummary(ctx context.Context, linkID int64) (int64, int64, int64, int64, error) {
+	const q = `
+		SELECT
+			COUNT(*) FILTER (WHERE clicked_at < NOW() - INTERVAL '24 hours') AS prev_total,
+			COUNT(DISTINCT COALESCE(ip_address, '')) FILTER (WHERE clicked_at < NOW() - INTERVAL '24 hours') AS prev_unique,
+			COUNT(*) FILTER (WHERE clicked_at >= NOW() - INTERVAL '48 hours' AND clicked_at < NOW() - INTERVAL '24 hours') AS prev_24h,
+			COUNT(*) FILTER (WHERE clicked_at >= NOW() - INTERVAL '14 days' AND clicked_at < NOW() - INTERVAL '7 days') AS prev_7d
+		FROM click_events
+		WHERE link_id = $1`
+
+	var prevTotal int64
+	var prevUnique int64
+	var prev24h int64
+	var prev7d int64
+	err := r.conn.Pool().QueryRow(ctx, q, linkID).Scan(&prevTotal, &prevUnique, &prev24h, &prev7d)
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	return prevTotal, prevUnique, prev24h, prev7d, nil
 }
 
 func (r *clickRepository) GetTimeSeries(ctx context.Context, linkID int64, window string) ([]TimeSeriesPoint, error) {

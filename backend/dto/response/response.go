@@ -2,10 +2,11 @@ package response
 
 // UserResponse represents the user data returned in API responses.
 type UserResponse struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	PhoneNo string `json:"phoneNo,omitempty"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	PhoneNo   string `json:"phoneNo,omitempty"`
+	AvatarURL string `json:"avatarUrl,omitempty"`
 }
 
 // LoginResponse represents the response after successful login.

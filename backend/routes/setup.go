@@ -37,6 +37,7 @@ func Setup(app *fiber.App, controllers *controller.Controllers, jwtService *auth
 	authMiddleware := mw.Auth(jwtService)
 	userGroup := v1.Group("/user", authMiddleware)
 	userGroup.Get("/me", controllers.User.GetMe)
+	userGroup.Patch("/me", controllers.User.UpdateMe)
 
 	// Link routes
 	linksPublic := v1.Group("/links")

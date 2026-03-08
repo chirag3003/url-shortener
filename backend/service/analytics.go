@@ -72,12 +72,31 @@ func (s *AnalyticsService) GetSummary(ctx context.Context, userID int64, linkID 
 		return nil, apperror.Internal(err)
 	}
 
+	prevTotal, prevUnique, prev24h, prev7d, err := s.clickRepo.GetPreviousSummary(ctx, linkID)
+	if err != nil {
+		return nil, apperror.Internal(err)
+	}
+
 	return &response.AnalyticsSummaryResponse{
-		TotalClicks:     total,
-		UniqueVisitors:  unique,
-		ClicksLast24H:   last24h,
-		ClicksLast7Days: last7d,
+		TotalClicks:           total,
+		TotalClicksChange:     calculateChange(total, prevTotal),
+		UniqueVisitors:        unique,
+		UniqueVisitorsChange:  calculateChange(unique, prevUnique),
+		ClicksLast24H:         last24h,
+		ClicksLast24HChange:   calculateChange(last24h, prev24h),
+		ClicksLast7Days:       last7d,
+		ClicksLast7DaysChange: calculateChange(last7d, prev7d),
 	}, nil
+}
+
+func calculateChange(current, previous int64) float64 {
+	if previous == 0 {
+		if current > 0 {
+			return 100.0
+		}
+		return 0.0
+	}
+	return (float64(current-previous) / float64(previous)) * 100.0
 }
 
 // GetTimeSeries returns click counts in time buckets.
