@@ -96,3 +96,69 @@ func TestGetByID_RepositoryError(t *testing.T) {
 		t.Fatalf("expected code INTERNAL_ERROR, got %s", appErr.Code)
 	}
 }
+
+func TestUpdate_Success(t *testing.T) {
+	svc, userRepo := newTestUserService(t)
+
+	id := int64(1001)
+	existingUser := &models.User{
+		ID:    id,
+		Name:  "Alice",
+		Email: "alice@example.com",
+	}
+
+	userRepo.EXPECT().
+		GetUserByID(gomock.Any(), strconv.FormatInt(id, 10)).
+		Return(existingUser, nil)
+
+	userRepo.EXPECT().
+		UpdateUser(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, u *models.User) error {
+			if u.Name != "Alice Updated" {
+				return errors.New("unexpected name")
+			}
+			if u.AvatarURL != "https://example.com/avatar.png" {
+				return errors.New("unexpected avatar URL")
+			}
+			return nil
+		})
+
+	result, err := svc.Update(context.Background(), strconv.FormatInt(id, 10), "Alice Updated", "https://example.com/avatar.png")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if result.Name != "Alice Updated" {
+		t.Fatalf("expected name Alice Updated, got %s", result.Name)
+	}
+	if result.AvatarURL != "https://example.com/avatar.png" {
+		t.Fatalf("expected avatar URL https://example.com/avatar.png, got %s", result.AvatarURL)
+	}
+}
+
+func TestUpdate_PartialUpdate(t *testing.T) {
+	svc, userRepo := newTestUserService(t)
+
+	id := int64(1001)
+	existingUser := &models.User{
+		ID:    id,
+		Name:  "Alice",
+		Email: "alice@example.com",
+	}
+
+	userRepo.EXPECT().
+		GetUserByID(gomock.Any(), strconv.FormatInt(id, 10)).
+		Return(existingUser, nil)
+
+	userRepo.EXPECT().
+		UpdateUser(gomock.Any(), gomock.Any()).
+		Return(nil)
+
+	// Only update name
+	result, err := svc.Update(context.Background(), strconv.FormatInt(id, 10), "New Name", "")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if result.Name != "New Name" {
+		t.Fatalf("expected name New Name, got %s", result.Name)
+	}
+}

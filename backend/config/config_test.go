@@ -12,6 +12,7 @@ func setTestEnv(t *testing.T) {
 	envVars := map[string]string{
 		"PORT":                     "3000",
 		"DATABASE_URL":             "postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable",
+		"REDIS_URL":                "redis://localhost:6379",
 		"JWT_SECRET":               "test-secret",
 		"JWT_EXPIRATION":           "2h",
 		"S3_ACCESS_KEY":            "test-key",
@@ -72,6 +73,7 @@ func TestLoad_Defaults(t *testing.T) {
 	// Set only required variables
 	required := map[string]string{
 		"DATABASE_URL":  "postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable",
+		"REDIS_URL":     "redis://localhost:6379",
 		"JWT_SECRET":    "secret",
 		"S3_ACCESS_KEY": "key",
 		"S3_SECRET_KEY": "secret",

@@ -56,7 +56,7 @@ func (mr *MockMediaRepositoryMockRecorder) CreateMedia(ctx, media any) *gomock.C
 }
 
 // GetMediaByID mocks base method.
-func (m *MockMediaRepository) GetMediaByID(ctx context.Context, id string) (*models.Media, error) {
+func (m *MockMediaRepository) GetMediaByID(ctx context.Context, id int64) (*models.Media, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMediaByID", ctx, id)
 	ret0, _ := ret[0].(*models.Media)
