@@ -1,7 +1,7 @@
 # DELETE /api/v1/links/:id
 
 ## Auth
-- Required: `Authorization: Bearer <jwt-or-api-key>`.
+- Required: `Authorization: Bearer <jwt>`.
 
 ## Success Response
 - `200 OK`

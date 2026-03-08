@@ -1,7 +1,7 @@
 # POST /api/v1/links
 
 ## Auth
-- Required: `Authorization: Bearer <jwt-or-api-key>`.
+- Required: `Authorization: Bearer <jwt>`.
 
 ## Request
 Same payload as quick endpoint.

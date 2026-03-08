@@ -1,7 +1,7 @@
 # POST /api/v1/media/upload
 
 ## Auth
-- Required: `Authorization: Bearer <jwt-or-api-key>`.
+- Required: `Authorization: Bearer <jwt>`.
 
 ## Request
 - `multipart/form-data` with `files` field containing one or more files.

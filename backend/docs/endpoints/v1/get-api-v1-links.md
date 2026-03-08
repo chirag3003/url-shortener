@@ -1,7 +1,7 @@
 # GET /api/v1/links
 
 ## Auth
-- Required: `Authorization: Bearer <jwt-or-api-key>`.
+- Required: `Authorization: Bearer <jwt>`.
 
 ## Query Params
 - `page` default `1`
