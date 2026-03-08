@@ -1,64 +1,98 @@
-.PHONY: build run dev test lint docker-build docker-run clean tidy mocks migrate-up migrate-down migrate-status
-
+# Variables
 BACKEND_DIR := backend
+FRONTEND_DIR := frontend
+DOCKER_COMPOSE := docker compose
 
-# Build the application binary
-build:
-	go build -o ./$(BACKEND_DIR)/bin/server ./$(BACKEND_DIR)/cmd/server
+.PHONY: help install build test lint tidy clean dev-api dev-redirect dev-frontend up down logs ps migrate-up migrate-down migrate-status
 
-# Run the application locally
-run: build
-	./$(BACKEND_DIR)/bin/server
+# Default help command
+help:
+	@echo "Available commands:"
+	@echo "  install        - Install dependencies for both backend and frontend"
+	@echo "  build          - Build backend binary and frontend production bundle"
+	@echo "  test           - Run all backend tests with race detection"
+	@echo "  test-coverage  - Run backend tests and generate HTML coverage report"
+	@echo "  lint           - Run golangci-lint on the backend"
+	@echo "  tidy           - Tidy Go modules"
+	@echo "  dev-api        - Run API service with Air (port 5000)"
+	@echo "  dev-redirect   - Run Redirect service with Air (port 5001)"
+	@echo "  dev-frontend   - Run Frontend (Next.js)"
+	@echo "  up             - Start all services with Docker Compose (detached)"
+	@echo "  down           - Stop all services and remove containers"
+	@echo "  logs           - Follow Docker Compose logs"
+	@echo "  ps             - Show status of Docker Compose services"
+	@echo "  migrate-up     - Apply all pending DB migrations"
+	@echo "  migrate-down   - Roll back one DB migration"
+	@echo "  migrate-status - Show DB migration status"
+	@echo "  clean          - Remove build artifacts and temporary files"
 
-# Run with Air (live reload)
-dev:
+# --- Setup & Maintenance ---
+
+install:
+	cd $(BACKEND_DIR) && go mod tidy
+	cd $(FRONTEND_DIR) && npm install
+
+tidy:
+	cd $(BACKEND_DIR) && go mod tidy
+
+# --- Development ---
+
+dev-api:
 	cd $(BACKEND_DIR) && air
 
-# Run tests
+dev-redirect:
+	cd $(BACKEND_DIR) && air -c .air.redirect.toml
+
+dev-frontend:
+	cd $(FRONTEND_DIR) && npm run dev
+
+# --- Build & Test ---
+
+build-backend:
+	go build -o ./$(BACKEND_DIR)/bin/server ./$(BACKEND_DIR)/cmd/server
+
+build-frontend:
+	cd $(FRONTEND_DIR) && npm run build
+
+build: build-backend build-frontend
+
 test:
 	go test -v -race -cover ./$(BACKEND_DIR)/...
 
-# Run tests with coverage report
 test-coverage:
 	go test -v -race -coverprofile=$(BACKEND_DIR)/coverage.out ./$(BACKEND_DIR)/...
 	go tool cover -html=$(BACKEND_DIR)/coverage.out -o $(BACKEND_DIR)/coverage.html
 
-# Run linter
 lint:
 	golangci-lint run ./$(BACKEND_DIR)/...
 
-# Tidy go modules
-tidy:
-	cd $(BACKEND_DIR) && go mod tidy
+# --- Docker Orchestration ---
 
-# Build Docker image
-docker-build:
-	docker build -t go-backend ./$(BACKEND_DIR)
+up:
+	$(DOCKER_COMPOSE) up --build -d
 
-# Run with Docker Compose
-docker-run:
-	docker compose up --build -d
+down:
+	$(DOCKER_COMPOSE) down
 
-# Stop Docker Compose services
-docker-stop:
-	docker compose down
+logs:
+	$(DOCKER_COMPOSE) logs -f
 
-# Clean build artifacts
-clean:
-	rm -rf ./$(BACKEND_DIR)/bin ./$(BACKEND_DIR)/tmp $(BACKEND_DIR)/coverage.out $(BACKEND_DIR)/coverage.html
+ps:
+	$(DOCKER_COMPOSE) ps
 
-# Generate mocks
-mocks:
-	go generate ./$(BACKEND_DIR)/repository/...
+# --- Database Migrations ---
 
-# Apply all pending DB migrations
 migrate-up:
 	cd $(BACKEND_DIR) && go run ./cmd/migrate up
 
-# Roll back one DB migration
 migrate-down:
 	cd $(BACKEND_DIR) && go run ./cmd/migrate down
 
-# Show DB migration status
 migrate-status:
 	cd $(BACKEND_DIR) && go run ./cmd/migrate status
+
+# --- Cleanup ---
+
+clean:
+	rm -rf ./$(BACKEND_DIR)/bin ./$(BACKEND_DIR)/tmp $(BACKEND_DIR)/coverage.out $(BACKEND_DIR)/coverage.html
+	rm -rf ./$(FRONTEND_DIR)/.next ./$(FRONTEND_DIR)/out

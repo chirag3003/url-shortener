@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"time"
+
 	"github.com/chirag3003/go-backend-template/config"
 	"github.com/chirag3003/go-backend-template/controller"
 	"github.com/chirag3003/go-backend-template/db"
@@ -27,7 +29,6 @@ import (
 	"github.com/gofiber/storage/redis/v3"
 	"github.com/joho/godotenv"
 	redisclient "github.com/redis/go-redis/v9"
-	"time"
 )
 
 func main() {
