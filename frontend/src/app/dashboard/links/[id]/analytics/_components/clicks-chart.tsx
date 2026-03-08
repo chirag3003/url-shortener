@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AreaChart } from "@/components/charts/area-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ClicksChartProps {
   timeSeriesData: {
@@ -15,6 +16,9 @@ interface ClicksChartProps {
 
 export function ClicksChart({ timeSeriesData }: ClicksChartProps) {
   const [window, setWindow] = useState<"24h" | "7d" | "30d">("30d");
+
+  const currentData = timeSeriesData[window];
+  const isLoading = !currentData || currentData.length === 0;
 
   return (
     <Card>
@@ -38,7 +42,19 @@ export function ClicksChart({ timeSeriesData }: ClicksChartProps) {
         </Tabs>
       </CardHeader>
       <CardContent>
-        <AreaChart data={timeSeriesData[window]} height={280} />
+        {isLoading ? (
+          <div className="flex items-end gap-2 h-[280px] w-full pt-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+              <Skeleton 
+                key={i} 
+                className="flex-1 rounded-t-sm" 
+                style={{ height: `${Math.random() * 60 + 20}%` }}
+              />
+            ))}
+          </div>
+        ) : (
+          <AreaChart data={currentData} height={280} />
+        )}
       </CardContent>
     </Card>
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AuthModal } from "@/components/auth-modal";
 import { useTheme } from "@/components/theme-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function ThemeToggle() {
   const { setTheme } = useTheme();
@@ -75,6 +77,8 @@ export function ThemeToggle() {
 }
 
 export function Navbar() {
+  const { user, isAuthenticated, logout } = useAuth();
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -104,19 +108,58 @@ export function Navbar() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
-          <AuthModal defaultTab="login">
-            <Button
-              variant="ghost"
-              className="font-medium text-muted-foreground hidden sm:flex"
-            >
-              Sign In
-            </Button>
-          </AuthModal>
-          <Link href="/dashboard">
-            <Button className="font-medium bg-primary hover:bg-primary/90 text-primary-foreground">
-              Dashboard <span className="hidden sm:inline ml-1">→</span>
-            </Button>
-          </Link>
+          {!isAuthenticated ? (
+            <>
+              <AuthModal defaultTab="login">
+                <Button
+                  variant="ghost"
+                  className="font-medium text-muted-foreground hidden sm:flex"
+                >
+                  Sign In
+                </Button>
+              </AuthModal>
+              <AuthModal defaultTab="register">
+                <Button className="font-medium bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Get Started <span className="hidden sm:inline ml-1">→</span>
+                </Button>
+              </AuthModal>
+            </>
+          ) : (
+            <>
+              <Link href="/dashboard">
+                <Button variant="ghost" className="font-medium text-muted-foreground hidden sm:flex">
+                  Dashboard
+                </Button>
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                        {user?.name?.split(" ").map(n => n[0]).join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium text-sm">{user?.name}</p>
+                      <p className="w-[200px] truncate text-xs text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={logout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
           <div className="ml-2 pl-2 border-l border-border h-6 flex items-center">
             <ThemeToggle />
           </div>

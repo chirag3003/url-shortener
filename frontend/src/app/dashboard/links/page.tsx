@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CreateLinkModal } from "@/components/create-link-modal";
+import { useLinks, useDeleteLink } from "@/hooks/use-links";
+import { LinksTableSkeleton } from "./_components/links-skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,25 +58,21 @@ function EmptyState() {
 // ── Page ─────────────────────────────────────────────────────────────────
 export default function LinksPage() {
   const [search, setSearch] = useState("");
-  const [links, setLinks] = useState<LinkResponse[]>(mockLinks);
   const [deleteTarget, setDeleteTarget] = useState<LinkResponse | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  // Filter links by search
-  const filtered = useMemo(() => {
-    if (!search.trim()) return links;
-    const q = search.toLowerCase();
-    return links.filter(
-      (link) =>
-        link.shortCode.toLowerCase().includes(q) ||
-        link.longUrl.toLowerCase().includes(q),
-    );
-  }, [links, search]);
+  const { data, isLoading, refetch } = useLinks({ 
+    page, 
+    limit: perPage,
+    search: search || undefined
+  });
+  
+  const { mutate: deleteLink, isPending: isDeleting } = useDeleteLink();
 
-  // Paginate
-  const totalPages = Math.ceil(filtered.length / perPage);
-  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+  const links = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / perPage);
 
   const handleCopy = (shortUrl: string) => {
     navigator.clipboard.writeText(shortUrl);
@@ -82,13 +80,15 @@ export default function LinksPage() {
   };
 
   const handleDelete = (link: LinkResponse) => {
-    setLinks((prev) => prev.filter((l) => l.id !== link.id));
-    setDeleteTarget(null);
-    toast.success(`Link /${link.shortCode} deleted.`);
+    deleteLink(link.id, {
+      onSuccess: () => {
+        setDeleteTarget(null);
+      }
+    });
   };
 
-  const handleCreated = (newLink: LinkResponse) => {
-    setLinks((prev) => [newLink, ...prev]);
+  const handleCreated = () => {
+    refetch();
   };
 
   return (
@@ -125,16 +125,20 @@ export default function LinksPage() {
       </div>
 
       {/* Table */}
-      {links.length === 0 ? (
-        <EmptyState />
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          No links match your search.
-        </div>
+      {isLoading ? (
+        <LinksTableSkeleton />
+      ) : total === 0 ? (
+        search ? (
+          <div className="text-center py-12 text-muted-foreground">
+            No links match your search.
+          </div>
+        ) : (
+          <EmptyState />
+        )
       ) : (
         <>
           <LinksTable
-            paginated={paginated}
+            paginated={links}
             handleCopy={handleCopy}
             setDeleteTarget={setDeleteTarget}
           />
@@ -144,7 +148,7 @@ export default function LinksPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Showing {(page - 1) * perPage + 1}–
-                {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
+                {Math.min(page * perPage, total)} of {total}{" "}
                 links
               </p>
               <div className="flex gap-2">
@@ -192,6 +196,7 @@ export default function LinksPage() {
               variant="outline"
               className="flex-1"
               onClick={() => setDeleteTarget(null)}
+              disabled={isDeleting}
             >
               Cancel
             </Button>
@@ -199,8 +204,9 @@ export default function LinksPage() {
               variant="destructive"
               className="flex-1"
               onClick={() => deleteTarget && handleDelete(deleteTarget)}
+              disabled={isDeleting}
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </DialogContent>

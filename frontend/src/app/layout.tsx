@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,12 +38,14 @@ export default function RootLayout({
     >
       <body className="font-sans antialiased">
         <QueryProvider>
-          <ThemeProvider defaultTheme="dark">
-            <TooltipProvider delayDuration={300}>
-              <main>{children}</main>
-              <Toaster richColors position="bottom-right" />
-            </TooltipProvider>
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider defaultTheme="dark">
+              <TooltipProvider delayDuration={300}>
+                <main>{children}</main>
+                <Toaster richColors position="bottom-right" />
+              </TooltipProvider>
+            </ThemeProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

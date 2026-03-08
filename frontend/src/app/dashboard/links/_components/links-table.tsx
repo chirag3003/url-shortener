@@ -18,7 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { mockClickCounts } from "@/lib/mock-data";
+import { useUpdateLink } from "@/hooks/use-links";
+import { Switch } from "@/components/ui/switch";
 import type { LinkResponse } from "@/lib/validators/link";
 
 function formatDate(iso: string) {
@@ -45,6 +46,12 @@ export function LinksTable({
   handleCopy,
   setDeleteTarget,
 }: LinksTableProps) {
+  const { mutate: updateLink } = useUpdateLink();
+
+  const handleToggleActive = (link: LinkResponse, isActive: boolean) => {
+    updateLink({ id: link.id, data: { isActive } });
+  };
+
   return (
     <div className="rounded-xl border overflow-hidden bg-card/50">
       <Table>
@@ -54,7 +61,6 @@ export function LinksTable({
             <TableHead className="font-semibold hidden sm:table-cell">
               Destination
             </TableHead>
-            <TableHead className="font-semibold">Clicks</TableHead>
             <TableHead className="font-semibold hidden md:table-cell">
               Created
             </TableHead>
@@ -75,23 +81,25 @@ export function LinksTable({
                   {truncateUrl(link.longUrl)}
                 </p>
               </TableCell>
-              <TableCell>
-                <p className="font-semibold text-sm">
-                  {(mockClickCounts[link.id] ?? 0).toLocaleString()}
-                </p>
-              </TableCell>
               <TableCell className="hidden md:table-cell">
                 <p className="text-sm text-muted-foreground">
                   {formatDate(link.createdAt)}
                 </p>
               </TableCell>
               <TableCell>
-                <Badge
-                  variant={link.isActive ? "default" : "secondary"}
-                  className="text-[10px]"
-                >
-                  {link.isActive ? "Active" : "Inactive"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Switch 
+                    checked={link.isActive} 
+                    onCheckedChange={(checked) => handleToggleActive(link, checked)}
+                    className="scale-75 origin-left"
+                  />
+                  <Badge
+                    variant={link.isActive ? "default" : "secondary"}
+                    className="text-[10px]"
+                  >
+                    {link.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
               </TableCell>
               <TableCell>
                 <DropdownMenu>

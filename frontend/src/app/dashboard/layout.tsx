@@ -11,7 +11,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { mockUser } from "@/lib/mock-data";
+import { ProtectedRoute } from "@/components/layout/protected-route";
+import { useAuth } from "@/providers/auth-provider";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -86,128 +87,133 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
 
+  if (!user) return null;
+
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "hidden md:flex flex-col border-r bg-card/50 transition-all duration-300 h-screen sticky top-0",
-          collapsed ? "w-[68px]" : "w-60",
-        )}
-      >
-        <div className="flex flex-col flex-1 px-3 py-4">
-          {/* Collapse toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="self-end mb-2 h-8 w-8 text-muted-foreground"
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={cn(
-                "transition-transform",
-                collapsed ? "rotate-180" : "",
-              )}
+    <ProtectedRoute>
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <aside
+          className={cn(
+            "hidden md:flex flex-col border-r bg-card/50 transition-all duration-300 h-screen sticky top-0",
+            collapsed ? "w-[68px]" : "w-60",
+          )}
+        >
+          <div className="flex flex-col flex-1 px-3 py-4">
+            {/* Collapse toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="self-end mb-2 h-8 w-8 text-muted-foreground"
+              onClick={() => setCollapsed(!collapsed)}
             >
-              <path d="m11 17-5-5 5-5" />
-              <path d="m18 17-5-5 5-5" />
-            </svg>
-          </Button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={cn(
+                  "transition-transform",
+                  collapsed ? "rotate-180" : "",
+                )}
+              >
+                <path d="m11 17-5-5 5-5" />
+                <path d="m18 17-5-5 5-5" />
+              </svg>
+            </Button>
 
-          <nav className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const active = isActive(item.href);
-              const link = (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                    active
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  <span className="shrink-0">{item.icon}</span>
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              );
-
-              if (collapsed) {
-                return (
-                  <Tooltip key={item.href}>
-                    <TooltipTrigger asChild>{link}</TooltipTrigger>
-                    <TooltipContent side="right">{item.label}</TooltipContent>
-                  </Tooltip>
+            <nav className="flex flex-col gap-1">
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                const link = (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    <span className="shrink-0">{item.icon}</span>
+                    {!collapsed && <span>{item.label}</span>}
+                  </Link>
                 );
-              }
 
-              return link;
-            })}
-          </nav>
+                if (collapsed) {
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger asChild>{link}</TooltipTrigger>
+                      <TooltipContent side="right">{item.label}</TooltipContent>
+                    </Tooltip>
+                  );
+                }
 
-          <Separator className="my-4" />
+                return link;
+              })}
+            </nav>
 
-          {/* User info */}
-          {!collapsed && (
-            <div className="mt-auto rounded-lg bg-muted/50 p-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                  {mockUser.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {mockUser.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {mockUser.email}
-                  </p>
+            <Separator className="my-4" />
+
+            {/* User info */}
+            {!collapsed && (
+              <div className="mt-auto rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
               </div>
+            )}
+          </div>
+        </aside>
+
+        {/* Main content */}
+        <div className="flex flex-1 flex-col min-w-0">
+          {/* Header */}
+          <header className="flex h-16 shrink-0 items-center justify-between border-b px-4 sm:px-6 lg:px-8 bg-background">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                Dashboard
+              </span>
             </div>
-          )}
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+            </div>
+          </header>
+
+          {/* Scrollable Content */}
+          <main className="flex-1 overflow-auto">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
+          </main>
         </div>
-      </aside>
-
-      {/* Main content */}
-      <div className="flex flex-1 flex-col min-w-0">
-        {/* Header */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b px-4 sm:px-6 lg:px-8 bg-background">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-              Dashboard
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-          </div>
-        </header>
-
-        {/* Scrollable Content */}
-        <main className="flex-1 overflow-auto">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </div>
-        </main>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

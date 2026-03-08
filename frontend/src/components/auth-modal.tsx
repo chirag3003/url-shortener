@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/providers/auth-provider";
+import { authService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +31,7 @@ export function AuthModal({
 }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"login" | "register">(defaultTab);
+  const { login } = useAuth();
 
   const [loginValues, setLoginValues] = useState<LoginInput>({
     email: "",
@@ -73,10 +76,16 @@ export function AuthModal({
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setLoading(false);
-    toast.success("Welcome back!");
-    handleOpenChange(false);
+    try {
+      const response = await authService.login(parsed.data);
+      login(response.token, response.user);
+      toast.success("Welcome back!");
+      handleOpenChange(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegSubmit = async (e: React.FormEvent) => {
@@ -92,10 +101,16 @@ export function AuthModal({
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    toast.success("Account created! Welcome aboard.");
-    handleOpenChange(false);
+    try {
+      const response = await authService.register(parsed.data);
+      login(response.token, response.user);
+      toast.success("Account created! Welcome aboard.");
+      handleOpenChange(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to create account");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
