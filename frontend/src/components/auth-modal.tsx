@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useAuth } from "@/providers/auth-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { authService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +78,7 @@ export function AuthModal({
     setLoading(true);
     try {
       const response = await authService.login(parsed.data);
-      login(response.token, response.user);
+      login(response.data.token, response.data.user);
       toast.success("Welcome back!");
       handleOpenChange(false);
     } catch (error: any) {
@@ -103,7 +103,7 @@ export function AuthModal({
     setLoading(true);
     try {
       const response = await authService.register(parsed.data);
-      login(response.token, response.user);
+      login(response.data.token, response.data.user);
       toast.success("Account created! Welcome aboard.");
       handleOpenChange(false);
     } catch (error: any) {

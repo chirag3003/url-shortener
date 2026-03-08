@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import type { LinkResponse } from "@/lib/validators/link";
 import { createLinkSchema } from "@/lib/validators/link";
+import { useCreateLink } from "@/hooks/use-links";
+import { linkService } from "@/services/link.service";
+import { useDebouncedCallback } from "use-debounce";
 
 export function CreateLinkModal({
   children,
@@ -24,7 +27,7 @@ export function CreateLinkModal({
   onCreated?: (link: LinkResponse) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { mutateAsync: createLink, isPending: loading } = useCreateLink();
   const [result, setResult] = useState<LinkResponse | null>(null);
   const [copied, setCopied] = useState(false);
   const [showUtm, setShowUtm] = useState(false);
@@ -48,6 +51,21 @@ export function CreateLinkModal({
     "idle" | "checking" | "available" | "taken"
   >("idle");
 
+  const checkAlias = useDebouncedCallback(async (alias: string) => {
+    if (!alias || alias.length < 3) {
+      setAliasStatus("idle");
+      return;
+    }
+
+    setAliasStatus("checking");
+    try {
+      const  available  = await linkService.checkAliasAvailability(alias);
+      setAliasStatus(available ? "available" : "taken");
+    } catch (err) {
+      setAliasStatus("idle");
+    }
+  }, 500);
+
   const buildPreviewUrl = () => {
     if (!values.longUrl) return "";
     try {
@@ -63,19 +81,7 @@ export function CreateLinkModal({
 
   const handleAliasChange = (alias: string) => {
     setValues((v) => ({ ...v, customAlias: alias }));
-    if (!alias || alias.length < 3) {
-      setAliasStatus("idle");
-      return;
-    }
-
-    setAliasStatus("checking");
-    // Mock debounced availability check
-    setTimeout(() => {
-      const taken = ["admin", "api", "dashboard", "login", "help"].includes(
-        alias.toLowerCase(),
-      );
-      setAliasStatus(taken ? "taken" : "available");
-    }, 400);
+    checkAlias(alias);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,31 +107,18 @@ export function CreateLinkModal({
       return;
     }
 
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-
-    const shortCode =
-      values.customAlias ||
-      Math.random().toString(36).substring(2, 6) +
-        Math.random().toString(36).substring(2, 6);
-
-    const created: LinkResponse = {
-      id: String(Date.now()),
-      userId: "7892143600128",
-      longUrl: finalUrl,
-      shortCode,
-      shortUrl: `http://localhost:5000/${shortCode}`,
-      redirectType: values.redirectType,
-      expiresAt: values.expiresAt || undefined,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    setResult(created);
-    setLoading(false);
-    onCreated?.(created);
-    toast.success("Link created successfully!");
+    try {
+      const created = await createLink({
+        longUrl: finalUrl,
+        customAlias: values.customAlias || undefined,
+        redirectType: values.redirectType,
+        expiresAt: values.expiresAt || undefined,
+      });
+      setResult(created);
+      onCreated?.(created);
+    } catch (err) {
+      // Error handled by hook
+    }
   };
 
   const handleCopy = async () => {
@@ -143,7 +136,6 @@ export function CreateLinkModal({
       setTimeout(() => {
         setResult(null);
         setCopied(false);
-        setLoading(false);
         setErrors({});
         setAliasStatus("idle");
         setShowUtm(false);

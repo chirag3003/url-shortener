@@ -3,8 +3,14 @@ import type { LoginInput, RegisterInput } from "@/lib/validators/auth";
 import type { UserResponse } from "@/lib/validators/user";
 
 export interface AuthResponse {
-  token: string;
-  user: UserResponse;
+  data: {
+    token: string;
+    user: UserResponse;
+  }
+}
+
+export interface AuthMeResponse {
+  data: UserResponse;
 }
 
 export const authService = {
@@ -18,13 +24,13 @@ export const authService = {
     return response.data;
   },
 
-  async getMe(): Promise<UserResponse> {
-    const response = await apiClient.get<UserResponse>("/api/v1/user/me");
+  async getMe(): Promise<AuthMeResponse> {
+    const response = await apiClient.get<AuthMeResponse>("/api/v1/user/me");
     return response.data;
   },
 
-  async updateMe(data: Partial<UserResponse>): Promise<UserResponse> {
-    const response = await apiClient.patch<UserResponse>("/api/v1/user/me", data);
+  async updateMe(data: Partial<UserResponse>): Promise<AuthMeResponse> {
+    const response = await apiClient.patch<AuthMeResponse>("/api/v1/user/me", data);
     return response.data;
   },
 };

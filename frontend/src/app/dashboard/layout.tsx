@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ProtectedRoute } from "@/components/layout/protected-route";
-import { useAuth } from "@/providers/auth-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -88,13 +88,11 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
-
+  console.log("called", user)
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
-
-  if (!user) return null;
 
   return (
     <ProtectedRoute>
@@ -173,17 +171,17 @@ export default function DashboardLayout({
               <div className="mt-auto rounded-lg bg-muted/50 p-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {user.name
+                    {user?.name
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate">
-                      {user.name}
+                      {user?.name}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {user.email}
+                      {user?.email}
                     </p>
                   </div>
                 </div>

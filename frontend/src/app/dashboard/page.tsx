@@ -195,7 +195,8 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-sm font-semibold">
-                      --
+                      {/* {link.clickCount ?? 0} */}
+                      0
                     </p>
                     <p className="text-xs text-muted-foreground">clicks</p>
                   </div>

@@ -36,7 +36,11 @@ func main() {
 	if err := cache.Init(cfg.RedisURL); err != nil {
 		log.Fatal().Err(err).Msg("failed to initialize Redis")
 	}
-	redisClient := redis.NewClient(&redis.Options{Addr: cfg.RedisURL}) // Simple client for streaming
+	opts, err := redis.ParseURL(cfg.RedisURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to parse redis URL")
+	}
+	redisClient := redis.NewClient(opts) // Simple client for streaming
 	streamManager := messaging.NewStreamManager(redisClient)
 
 	repo := repository.NewRepository(dbConn)

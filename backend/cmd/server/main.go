@@ -86,7 +86,11 @@ func main() {
 	analyticsService := service.NewAnalyticsService(repo.Click, repo.Link, log)
 
 	// Start Analytics Worker
-	rClient := redisclient.NewClient(&redisclient.Options{Addr: cfg.RedisURL})
+	opts, err := redisclient.ParseURL(cfg.RedisURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to parse redis URL")
+	}
+	rClient := redisclient.NewClient(opts)
 	streamManager := messaging.NewStreamManager(rClient)
 	streamManager.EnsureGroup(context.Background(), messaging.AnalyticsStream, messaging.AnalyticsGroup)
 	go streamManager.Consume(context.Background(), messaging.AnalyticsStream, messaging.AnalyticsGroup, "api-server-1", func(data []byte) error {

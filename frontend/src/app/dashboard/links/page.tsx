@@ -14,7 +14,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { mockLinks } from "@/lib/mock-data";
 import type { LinkResponse } from "@/lib/validators/link";
 import { LinksHeader } from "./_components/links-header";
 import { LinksTable } from "./_components/links-table";
@@ -67,6 +66,7 @@ export default function LinksPage() {
     limit: perPage,
     search: search || undefined
   });
+
   
   const { mutate: deleteLink, isPending: isDeleting } = useDeleteLink();
 

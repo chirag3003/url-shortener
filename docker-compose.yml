@@ -9,7 +9,7 @@ services:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
-      - REDIS_URL=redis:6379
+      - REDIS_URL=redis://redis:6379
     depends_on:
       postgres:
         condition: service_healthy
@@ -27,7 +27,7 @@ services:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable
-      - REDIS_URL=redis:6379
+      - REDIS_URL=redis://redis:6379
       - BASE_URL=http://localhost:5001
     depends_on:
       postgres:

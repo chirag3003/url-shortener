@@ -1,22 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { mockUser } from "@/lib/mock-data";
+import { useAuth } from "@/hooks/use-auth";
+import { authService } from "@/services/auth.service";
 
 export function ProfileView() {
-  const [name, setName] = useState(mockUser.name);
-  const [email, setEmail] = useState(mockUser.email);
+  const { user, refreshUser } = useAuth();
+  const [name, setName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+    }
+  }, [user]);
+
   const handleSave = async () => {
+    if (!name.trim() || !email.trim()) {
+      toast.error("Name and email are required");
+      return;
+    }
+
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setSaving(false);
-    toast.success("Profile updated!");
+    try {
+      await authService.updateMe({ name, email });
+      await refreshUser();
+      toast.success("Profile updated!");
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

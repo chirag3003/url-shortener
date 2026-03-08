@@ -15,25 +15,26 @@ interface AuthContextType {
   refreshUser: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const queryClient = useQueryClient();
   const router = useRouter();
-
   // On mount, check localStorage for token
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
     }
+    setIsInitializing(false);
   }, []);
 
   // Use React Query to manage the user profile state
   const { 
     data: user, 
-    isLoading, 
+    isLoading: queryIsLoading, 
     refetch 
   } = useQuery({
     queryKey: ["user", token],
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     retry: false,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
+
 
   const login = useCallback((newToken: string, newUser: UserResponse) => {
     localStorage.setItem("token", newToken);
@@ -62,8 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refetch]);
 
   const value = {
-    user: user ?? null,
-    isLoading: !!token && isLoading,
+    user: user?.data ?? null,
+    isLoading: isInitializing || (!!token && queryIsLoading),
     isAuthenticated: !!user,
     login,
     logout,
@@ -71,12 +73,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 }
