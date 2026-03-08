@@ -1,0 +1,30 @@
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - gosec
+    - gosimple
+    - ineffassign
+    - typecheck
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  gosec:
+    excludes:
+      - G101 # Look for hard coded credentials (false positives on field names)
+
+issues:
+  exclude-dirs:
+    - vendor
+    - tmp
+    - testdata
+
+run:
+  timeout: 5m
