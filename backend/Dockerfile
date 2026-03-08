@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build the binary
-RUN CGO_ENABLED=1 go build -o /app/server .
+RUN CGO_ENABLED=1 go build -o /app/server ./cmd/server
 
 # Runtime stage
 FROM debian:bookworm-slim

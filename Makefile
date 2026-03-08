@@ -4,7 +4,7 @@ BACKEND_DIR := backend
 
 # Build the application binary
 build:
-	go build -o ./$(BACKEND_DIR)/bin/server ./$(BACKEND_DIR)
+	go build -o ./$(BACKEND_DIR)/bin/server ./$(BACKEND_DIR)/cmd/server
 
 # Run the application locally
 run: build
