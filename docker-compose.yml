@@ -1,13 +1,12 @@
 services:
   go-backend:
     build: ./backend
-    container_name: go-backend
     command: ./server
     ports:
       - "5010:5000"
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable}
-      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@db:5432/url_shortener?sslmode=disable}
+      - REDIS_URL=${REDIS_URL:-redis://cache:6379}
       - JWT_SECRET=${JWT_SECRET:-dev-secret-key-do-not-use-in-production}
       - JWT_EXPIRATION=${JWT_EXPIRATION:-24h}
       - CORS_ALLOW_ORIGINS=${CORS_ALLOW_ORIGINS:-*}
@@ -22,25 +21,26 @@ services:
       - S3_BUCKET=${S3_BUCKET:-}
       - S3_ENDPOINT=${S3_ENDPOINT:-s3.ap-south-1.amazonaws.com}
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
-      redis:
+      cache:
         condition: service_started
+    networks:
+      - app-network
     restart: unless-stopped
 
   redirect-service:
     build: ./backend
-    container_name: redirect-service
     command: ./redirect
     ports:
       - "5011:5001"
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/url_shortener?sslmode=disable}
-      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:postgres@db:5432/url_shortener?sslmode=disable}
+      - REDIS_URL=${REDIS_URL:-redis://cache:6379}
       - JWT_SECRET=${JWT_SECRET:-dev-secret-key-do-not-use-in-production}
       - JWT_EXPIRATION=${JWT_EXPIRATION:-24h}
       - CORS_ALLOW_ORIGINS=${CORS_ALLOW_ORIGINS:-*}
-      - BASE_URL=${BASE_URL:-http://localhost:5010}
+      - BASE_URL=${BASE_URL:-http://localhost:5011}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - HYPERFLAKE_DATACENTER_ID=${HYPERFLAKE_DATACENTER_ID:-1}
       - HYPERFLAKE_MACHINE_ID=${HYPERFLAKE_MACHINE_ID:-1}
@@ -51,26 +51,28 @@ services:
       - S3_BUCKET=${S3_BUCKET:-}
       - S3_ENDPOINT=${S3_ENDPOINT:-s3.ap-south-1.amazonaws.com}
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
-      redis:
+      cache:
         condition: service_started
+    networks:
+      - app-network
     restart: unless-stopped
 
   frontend:
     build: ./frontend
-    container_name: nextjs-frontend
     ports:
       - "3010:3000"
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:5010}
     depends_on:
       - go-backend
+    networks:
+      - app-network
     restart: unless-stopped
 
-  postgres:
+  db:
     image: postgres:16
-    container_name: postgres
     ports:
       - "5430:5432"
     environment:
@@ -84,14 +86,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - app-network
     restart: unless-stopped
 
-  redis:
+  cache:
     image: redis:7-alpine
-    container_name: redis
     ports:
       - "6380:6379"
+    networks:
+      - app-network
     restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres-data:
