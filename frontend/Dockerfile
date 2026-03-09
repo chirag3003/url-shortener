@@ -14,6 +14,9 @@ RUN if [ -f bun.lock ]; then \
 # Copy source code
 COPY . .
 
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # Build the application
 RUN if [ -f bun.lock ]; then bun run build; else npm run build; fi
 
