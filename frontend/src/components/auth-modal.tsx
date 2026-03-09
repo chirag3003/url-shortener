@@ -82,7 +82,9 @@ export function AuthModal({
       toast.success("Welcome back!");
       handleOpenChange(false);
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Invalid email or password");
+      const message =
+        error.response?.data?.error?.message || "Invalid email or password";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -107,7 +109,9 @@ export function AuthModal({
       toast.success("Account created! Welcome aboard.");
       handleOpenChange(false);
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to create account");
+      const message =
+        error.response?.data?.error?.message || "Failed to create account";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
