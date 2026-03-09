@@ -1,68 +1,69 @@
-# URL Shortener
+# URL Shortener (Full-Stack)
 
-A production-ready URL shortener with a Go (Fiber v3) backend and a Next.js frontend.
+A high-performance, production-ready URL shortener built with a Go (Fiber v3) backend and a Next.js frontend. This project features a distributed ID generation system, real-time analytics via Redis Streams, and a containerized microservices architecture.
 
-## Features
+## 🚀 Quick Start
 
-- **Backend**: Go (Fiber v3), PostgreSQL, Redis, JWT Authentication, Analytics.
-- **Frontend**: Next.js (App Router), Tailwind CSS.
-- **Infrastructure**: Docker Compose, PostgreSQL, Redis.
+The fastest way to get the entire stack running is using Docker Compose:
 
-## Development Setup
+```bash
+docker compose up --build
+```
 
-To run the individual services in development mode with live-reloading:
+- **Frontend**: [http://localhost:3010](http://localhost:3010)
+- **API Service**: [http://localhost:5010](http://localhost:5010)
+- **Redirect Service**: [http://localhost:5011](http://localhost:5011)
 
-### 1. Prerequisites
+---
 
-Ensure you have the following installed:
-- [Go](https://golang.org/doc/install) (1.21+)
-- [Node.js](https://nodejs.org/en/download/) (18+)
-- [Docker](https://docs.docker.com/get-docker/)
-- [Air](https://github.com/cosmtrek/air) (for Go live-reloading)
+## 🏗️ Architecture & Design Decisions
 
-### 2. Run Infrastructure (Databases)
+This project is split into three main components to ensure scalability and low-latency redirects:
 
-Start only the supporting services (PostgreSQL and Redis) in the background:
+1.  **API Service (`backend/cmd/server`)**: Handles user authentication, link management (CRUD), and analytics retrieval.
+2.  **Redirect Service (`backend/cmd/redirect`)**: A ultra-lightweight service dedicated solely to resolving short codes and redirecting users.
+3.  **Frontend (`frontend/`)**: A modern Next.js application for managing links and viewing analytics.
 
+### Key Architectural Choices:
+
+- **Hyperflake ID Generation**: We use **Hyperflake** (a Snowflake-inspired distributed ID generator) to create unique, 64-bit time-ordered integers for link IDs. This ensures high-performance ID generation across multiple nodes without coordination.
+- **Asynchronous Analytics**: To keep redirects as fast as possible, the Redirect Service publishes click metadata to a **Redis Stream** and immediately returns the HTTP 301/302 response. A background worker (integrated or separate) consumes these streams to update PostgreSQL.
+- **Service Separation**: The API and Redirect services are separated to allow independent scaling. The Redirect service can be scaled horizontally to handle massive traffic spikes without affecting the management API.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Go 1.22+, Fiber v3, GORM (PostgreSQL), Redis (Streams & Caching)
+- **Frontend**: Next.js 14 (App Router), Tailwind CSS, TypeScript
+- **Infrastructure**: Docker, Docker Compose, PostgreSQL 16, Redis 7
+
+---
+
+## 💻 Local Development
+
+If you prefer to run services individually for real-time coding:
+
+### 1. Infrastructure
 ```bash
 docker compose up postgres redis -d
 ```
 
-### 3. Start Backend Services
-
-In separate terminal tabs, run the following to start the backend with live-reloading:
-
-**API Service (Port 5000):**
+### 2. Backend (API & Redirect)
+Requires [Air](https://github.com/air-verse/air) for live-reloading.
 ```bash
-make dev-api
+make dev-api      # Terminal 1
+make dev-redirect # Terminal 2
 ```
 
-**Redirect Service (Port 5001):**
+### 3. Frontend
 ```bash
-make dev-redirect
+make dev-frontend # Terminal 3
 ```
 
-### 4. Start Frontend
+---
 
-In another terminal tab, start the Next.js development server:
+## 📜 Documentation
 
-```bash
-make dev-frontend
-```
-
-## Makefile Commands
-
-| Command | Description |
-| :--- | :--- |
-| `make install` | Install all dependencies (Go + NPM) |
-| `make build` | Build backend binary and frontend bundle |
-| `make test` | Run all backend tests |
-| `make up` | Start full environment in Docker |
-| `make down` | Stop and remove all containers |
-| `make logs` | Follow Docker logs |
-| `make migrate-up`| Apply DB migrations |
-
-## Documentation
-
-- **Backend API**: See `backend/docs/endpoints/INDEX.md`
-- **Postman Collection**: `backend/docs/postman.json`
+- **API Reference**: Detailed endpoint documentation can be found in `backend/docs/endpoints/INDEX.md`.
+- **Postman**: A pre-configured collection is available at `backend/docs/postman.json`.

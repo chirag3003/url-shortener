@@ -21,48 +21,52 @@ export function HeroSection() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
             </span>
-            Blazing fast redirects in under 10ms
+            Enterprise-grade reliability and security
           </div>
 
           {/* Headline */}
           <h1 className="max-w-4xl text-center text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-            Shorten Links.{" "}
-            <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              Amplify Reach.
+            The Enterprise Link{" "}
+            <span className="bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              Management Platform
             </span>
           </h1>
 
           {/* Subheading */}
           <p className="mt-6 max-w-2xl text-center text-lg text-muted-foreground sm:text-xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            Create short, powerful links in seconds. Track every click with
-            real-time analytics, custom aliases, and a developer-friendly API.
+            Secure, scalable, and compliant link routing for modern teams.
+            Control your brand's digital touchpoints with granular analytics and robust developer APIs.
           </p>
 
-          {/* Quick Shortener */}
-          <div className="mt-10 w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-            <QuickShortener />
-          </div>
-
           {/* Auth CTA */}
-          <div className="mt-8 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+          <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
             <AuthModal defaultTab="register">
               <Button
-                variant="outline"
                 size="lg"
-                className="rounded-xl font-semibold"
+                className="rounded-xl font-semibold px-8 hover:-translate-y-0.5 transition-transform"
               >
-                Sign up free →
+                Get Started
               </Button>
             </AuthModal>
             <Link href="/dashboard">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="lg"
-                className="rounded-xl font-medium text-muted-foreground"
+                className="rounded-xl font-medium px-8 hover:-translate-y-0.5 transition-transform"
               >
-                View Demo Dashboard
+                View Documentation
               </Button>
             </Link>
+          </div>
+
+          {/* Quick Shortener (Interactive Demo) */}
+          <div className="mt-16 w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+            <div className="text-center mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Try the API Sandbox
+            </div>
+            <div className="p-1 rounded-2xl bg-linear-to-r from-primary/10 via-accent/10 to-secondary/10 shadow-lg border bg-card/50 backdrop-blur-sm">
+                <QuickShortener />
+            </div>
           </div>
         </div>
       </div>

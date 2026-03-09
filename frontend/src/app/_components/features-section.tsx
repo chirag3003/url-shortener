@@ -3,9 +3,74 @@ import { Button } from "@/components/ui/button";
 
 const features = [
   {
-    title: "Real-Time Analytics",
+    title: "Secure & Compliant",
     description:
-      "Track every click with detailed breakdowns by geography, device, browser, and referrer.",
+      "Built with enterprise-grade security. Support for SSO (SAML/OIDC), end-to-end encryption, and comprehensive audit logs.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    ),
+  },
+  {
+    title: "Team Collaboration",
+    description:
+      "Manage permissions with Role-Based Access Control (RBAC). Organize links by workspaces, teams, or campaigns seamlessly.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    title: "Developer-First API",
+    description:
+      "Integrate link generation programmatically into your existing infrastructure. Backed by a 99.99% uptime SLA.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    ),
+  },
+  {
+    title: "Actionable Analytics",
+    description:
+      "Make data-driven decisions with rich, privacy-respecting insights into geographic, device, and referrer data.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,89 +88,22 @@ const features = [
       </svg>
     ),
   },
-  {
-    title: "Custom Aliases",
-    description:
-      "Create branded, memorable short links with your own custom aliases instead of random codes.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="m16 3 5 5-5 5" />
-        <path d="M21 8H8a4 4 0 1 0 0 8h1" />
-      </svg>
-    ),
-  },
-  {
-    title: "Link Expiry",
-    description:
-      "Set self-destruct dates on your links for time-sensitive campaigns and promotions.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    ),
-  },
-];
-
-const stats = [
-  { value: "10M+", label: "Links Created" },
-  { value: "250M+", label: "Clicks Tracked" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "<10ms", label: "Redirect Latency" },
 ];
 
 export function FeaturesSection() {
   return (
     <>
-      {/* Stats Section */}
-      <section className="border-y bg-muted/30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
-      <section className="py-20 sm:py-28">
+      <section className="py-20 sm:py-28 bg-muted/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Everything you need to{" "}
-              <span className="text-primary">own your links</span>
+              Engineered for{" "}
+              <span className="text-primary">Enterprise Scale</span>
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-              From quick one-off links to full analytics dashboards, Snip.ly
-              gives you the tools to make every link count.
+              Robust infrastructure, granular controls, and seamless integration
+              capabilities to power your organization's link management.
             </p>
           </div>
 
@@ -137,10 +135,10 @@ export function FeaturesSection() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Ready to supercharge your links?
+              Ready to scale your link infrastructure?
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Join thousands of developers and marketers who trust Snip.ly.
+              Contact our sales team or start exploring the API today.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <AuthModal defaultTab="register">
@@ -148,9 +146,16 @@ export function FeaturesSection() {
                   size="lg"
                   className="rounded-xl px-8 font-semibold text-base"
                 >
-                  Get Started Free
+                  Get Started
                 </Button>
               </AuthModal>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-xl px-8 font-semibold text-base"
+              >
+                Contact Sales
+              </Button>
             </div>
           </div>
         </div>
