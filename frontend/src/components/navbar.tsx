@@ -127,16 +127,25 @@ export function Navbar() {
           ) : (
             <>
               <Link href="/dashboard">
-                <Button variant="ghost" className="font-medium text-muted-foreground hidden sm:flex">
+                <Button
+                  variant="ghost"
+                  className="font-medium text-muted-foreground hidden sm:flex"
+                >
                   Dashboard
                 </Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        {user?.name?.split(" ").map(n => n[0]).join("")}
+                        {user?.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -153,7 +162,10 @@ export function Navbar() {
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard/settings">Settings</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={logout}>
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onClick={logout}
+                  >
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

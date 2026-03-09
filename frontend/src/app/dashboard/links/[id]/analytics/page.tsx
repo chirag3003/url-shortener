@@ -2,7 +2,10 @@
 
 import { useParams } from "next/navigation";
 import { useLink } from "@/hooks/use-links";
-import { useAnalyticsSummary, useAnalyticsTimeSeries } from "@/hooks/use-analytics";
+import {
+  useAnalyticsSummary,
+  useAnalyticsTimeSeries,
+} from "@/hooks/use-analytics";
 import { Breakdowns } from "./_components/breakdowns";
 import { ClicksChart } from "./_components/clicks-chart";
 import { SummaryCards } from "./_components/summary-cards";
@@ -10,10 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AnalyticsPage() {
   const { id } = useParams<{ id: string }>();
-  
+
   const { data: link, isLoading: isLoadingLink } = useLink(id);
-  const { data: summary, isLoading: isLoadingSummary } = useAnalyticsSummary(id);
-  
+  const { data: summary, isLoading: isLoadingSummary } =
+    useAnalyticsSummary(id);
+
   const { data: ts24h, isLoading: isTs24h } = useAnalyticsTimeSeries(id, "24h");
   const { data: ts7d, isLoading: isTs7d } = useAnalyticsTimeSeries(id, "7d");
   const { data: ts30d, isLoading: isTs30d } = useAnalyticsTimeSeries(id, "30d");

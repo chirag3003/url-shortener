@@ -61,13 +61,12 @@ export default function LinksPage() {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
-  const { data, isLoading, refetch } = useLinks({ 
-    page, 
+  const { data, isLoading, refetch } = useLinks({
+    page,
     limit: perPage,
-    search: search || undefined
+    search: search || undefined,
   });
 
-  
   const { mutate: deleteLink, isPending: isDeleting } = useDeleteLink();
 
   const links = data?.items ?? [];
@@ -83,7 +82,7 @@ export default function LinksPage() {
     deleteLink(link.id, {
       onSuccess: () => {
         setDeleteTarget(null);
-      }
+      },
     });
   };
 
@@ -148,8 +147,7 @@ export default function LinksPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Showing {(page - 1) * perPage + 1}–
-                {Math.min(page * perPage, total)} of {total}{" "}
-                links
+                {Math.min(page * perPage, total)} of {total} links
               </p>
               <div className="flex gap-2">
                 <Button

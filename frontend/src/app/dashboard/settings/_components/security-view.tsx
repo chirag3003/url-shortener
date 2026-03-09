@@ -33,7 +33,7 @@ export function SecurityView() {
     try {
       await authService.updateMe({
         // Assuming backend handles password update via updateMe with specific fields
-        // or we need a specific password update method. 
+        // or we need a specific password update method.
         // For now, mapping to updateMe based on common patterns.
         password: newPassword,
         currentPassword: currentPassword,

@@ -72,7 +72,10 @@ export function LinksTable({
           {paginated.map((link) => (
             <TableRow key={link.id} className="group">
               <TableCell>
-                <p className="font-semibold text-primary font-mono text-sm cursor-pointer" onClick={() => handleCopy(link.shortUrl)}>
+                <p
+                  className="font-semibold text-primary font-mono text-sm cursor-pointer"
+                  onClick={() => handleCopy(link.shortUrl)}
+                >
                   {link.shortUrl}
                 </p>
               </TableCell>
@@ -88,9 +91,11 @@ export function LinksTable({
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={link.isActive} 
-                    onCheckedChange={(checked) => handleToggleActive(link, checked)}
+                  <Switch
+                    checked={link.isActive}
+                    onCheckedChange={(checked) =>
+                      handleToggleActive(link, checked)
+                    }
                     className="scale-75 origin-left"
                   />
                   <Badge

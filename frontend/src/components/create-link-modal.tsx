@@ -59,7 +59,7 @@ export function CreateLinkModal({
 
     setAliasStatus("checking");
     try {
-      const  available  = await linkService.checkAliasAvailability(alias);
+      const available = await linkService.checkAliasAvailability(alias);
       setAliasStatus(available ? "available" : "taken");
     } catch (err) {
       setAliasStatus("idle");

@@ -28,13 +28,15 @@ const referrerFavicons: Record<string, string> = {
 
 export function Breakdowns({ id }: { id: string }) {
   const results = useFullLinkAnalytics(id);
-  
-  const [referrers, devices, browsers, geography] = results.map(r => r.data ?? []);
-  const isLoading = results.some(r => r.isLoading);
+
+  const [referrers, devices, browsers, geography] = results.map(
+    (r) => r.data ?? [],
+  );
+  const isLoading = results.some((r) => r.isLoading);
 
   const renderSkeleton = () => (
     <div className="space-y-4">
-      {[1, 2, 3, 4].map(i => (
+      {[1, 2, 3, 4].map((i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-2 w-full" />
@@ -51,8 +53,12 @@ export function Breakdowns({ id }: { id: string }) {
           <CardTitle className="text-base">Top Referrers</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? renderSkeleton() : referrers.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">No data yet</div>
+          {isLoading ? (
+            renderSkeleton()
+          ) : referrers.length === 0 ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No data yet
+            </div>
           ) : (
             <div className="space-y-3">
               {referrers.map((item, idx) => {
@@ -89,8 +95,12 @@ export function Breakdowns({ id }: { id: string }) {
           <CardTitle className="text-base">Geography</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? renderSkeleton() : geography.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">No data yet</div>
+          {isLoading ? (
+            renderSkeleton()
+          ) : geography.length === 0 ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No data yet
+            </div>
           ) : (
             <div className="space-y-3">
               {geography.map((item) => {
@@ -132,7 +142,9 @@ export function Breakdowns({ id }: { id: string }) {
               <Skeleton className="h-32 w-32 rounded-full" />
             </div>
           ) : devices.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">No data yet</div>
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No data yet
+            </div>
           ) : (
             <DonutChart data={devices} />
           )}
@@ -150,7 +162,9 @@ export function Breakdowns({ id }: { id: string }) {
               <Skeleton className="h-32 w-32 rounded-full" />
             </div>
           ) : browsers.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">No data yet</div>
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              No data yet
+            </div>
           ) : (
             <DonutChart data={browsers} />
           )}

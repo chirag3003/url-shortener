@@ -176,9 +176,7 @@ export default function DashboardLayout({
                       .join("")}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">
-                      {user?.name}
-                    </p>
+                    <p className="text-sm font-medium truncate">{user?.name}</p>
                     <p className="text-xs text-muted-foreground truncate">
                       {user?.email}
                     </p>

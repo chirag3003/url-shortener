@@ -6,7 +6,7 @@ export interface AuthResponse {
   data: {
     token: string;
     user: UserResponse;
-  }
+  };
 }
 
 export interface AuthMeResponse {
@@ -15,12 +15,18 @@ export interface AuthMeResponse {
 
 export const authService = {
   async login(data: LoginInput): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>("/api/v1/auth/login", data);
+    const response = await apiClient.post<AuthResponse>(
+      "/api/v1/auth/login",
+      data,
+    );
     return response.data;
   },
 
   async register(data: RegisterInput): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>("/api/v1/auth/register", data);
+    const response = await apiClient.post<AuthResponse>(
+      "/api/v1/auth/register",
+      data,
+    );
     return response.data;
   },
 
@@ -30,7 +36,10 @@ export const authService = {
   },
 
   async updateMe(data: Partial<UserResponse>): Promise<AuthMeResponse> {
-    const response = await apiClient.patch<AuthMeResponse>("/api/v1/user/me", data);
+    const response = await apiClient.patch<AuthMeResponse>(
+      "/api/v1/user/me",
+      data,
+    );
     return response.data;
   },
 };

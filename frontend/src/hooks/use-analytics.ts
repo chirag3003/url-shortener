@@ -9,7 +9,10 @@ export function useAnalyticsSummary(id: string) {
   });
 }
 
-export function useAnalyticsTimeSeries(id: string, range: "24h" | "7d" | "30d" = "7d") {
+export function useAnalyticsTimeSeries(
+  id: string,
+  range: "24h" | "7d" | "30d" = "7d",
+) {
   return useQuery({
     queryKey: ["analytics", "timeseries", id, range],
     queryFn: () => analyticsService.getTimeSeries(id, { range }),
@@ -26,8 +29,13 @@ export function useAnalyticsBreakdown(id: string, kind: AnalyticsKind) {
 }
 
 export function useFullLinkAnalytics(id: string) {
-  const kinds: AnalyticsKind[] = ["referrers", "devices", "browsers", "geography"];
-  
+  const kinds: AnalyticsKind[] = [
+    "referrers",
+    "devices",
+    "browsers",
+    "geography",
+  ];
+
   return useQueries({
     queries: kinds.map((kind) => ({
       queryKey: ["analytics", "breakdown", id, kind],
