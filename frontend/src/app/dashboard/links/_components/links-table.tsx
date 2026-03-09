@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -19,7 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useUpdateLink } from "@/hooks/use-links";
-import { Switch } from "@/components/ui/switch";
 import type { LinkResponse } from "@/lib/validators/link";
 
 function formatDate(iso: string) {

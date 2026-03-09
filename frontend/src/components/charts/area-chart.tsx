@@ -146,7 +146,6 @@ export function AreaChart({
 
         {/* Hover targets & dots */}
         {points.map((p, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: <change during integration>
           <g key={i}>
             {/** biome-ignore lint/a11y/noStaticElementInteractions: <not required> */}
             <rect
@@ -200,7 +199,6 @@ export function AreaChart({
             )
             .map((p, i) => (
               <text
-                // biome-ignore lint/suspicious/noArrayIndexKey: <need to change during integaration>
                 key={i}
                 x={p.x}
                 y={height - 10}

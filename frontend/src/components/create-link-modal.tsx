@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { useDebouncedCallback } from "use-debounce";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,11 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useCreateLink } from "@/hooks/use-links";
 import type { LinkResponse } from "@/lib/validators/link";
 import { createLinkSchema } from "@/lib/validators/link";
-import { useCreateLink } from "@/hooks/use-links";
 import { linkService } from "@/services/link.service";
-import { useDebouncedCallback } from "use-debounce";
 
 export function CreateLinkModal({
   children,
@@ -61,7 +61,7 @@ export function CreateLinkModal({
     try {
       const available = await linkService.checkAliasAvailability(alias);
       setAliasStatus(available ? "available" : "taken");
-    } catch (err) {
+    } catch (_err) {
       setAliasStatus("idle");
     }
   }, 500);
@@ -116,7 +116,7 @@ export function CreateLinkModal({
       });
       setResult(created);
       onCreated?.(created);
-    } catch (err) {
+    } catch (_err) {
       // Error handled by hook
     }
   };

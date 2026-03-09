@@ -1,5 +1,8 @@
-import { analyticsService, AnalyticsKind } from "@/services/analytics.service";
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import {
+  type AnalyticsKind,
+  analyticsService,
+} from "@/services/analytics.service";
 
 export function useAnalyticsSummary(id: string) {
   return useQuery({

@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/use-auth";
-import { authService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/use-auth";
 import type { LoginInput } from "@/lib/validators/auth";
 import { loginSchema, registerSchema } from "@/lib/validators/auth";
+import { authService } from "@/services/auth.service";
 import { FieldError } from "./auth/field-error";
 import { OAuthButtons } from "./auth/oauth-buttons";
 import { PasswordStrengthBar } from "./auth/password-strength";

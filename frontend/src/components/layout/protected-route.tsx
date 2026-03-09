@@ -1,9 +1,9 @@
 "use client";
 
-import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/use-auth";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -37,5 +37,5 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   // Only render children if authenticated
-  return isAuthenticated ? <>{children}</> : null;
+  return isAuthenticated ? children : null;
 }

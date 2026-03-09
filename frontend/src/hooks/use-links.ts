@@ -1,11 +1,11 @@
-import { linkService } from "@/services/link.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type {
   CreateLinkInput,
   ListLinksQuery,
   UpdateLinkInput,
 } from "@/lib/validators/link";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { linkService } from "@/services/link.service";
 
 export function useLinks(query?: ListLinksQuery) {
   return useQuery({
@@ -56,7 +56,7 @@ export function useUpdateLink() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateLinkInput }) =>
       linkService.updateLink(id, data),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
       queryClient.invalidateQueries({ queryKey: ["link", variables.id] });
     },

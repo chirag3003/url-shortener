@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AuthModal } from "@/components/auth-modal";
 import { QuickShortener } from "@/components/quick-shortener";
 import { Button } from "@/components/ui/button";
 

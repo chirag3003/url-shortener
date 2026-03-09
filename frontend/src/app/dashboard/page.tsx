@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLinks } from "@/hooks/use-links";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
+import { useLinks } from "@/hooks/use-links";
 
 export default function DashboardPage() {
   const { data, isLoading } = useLinks({ limit: 4 });

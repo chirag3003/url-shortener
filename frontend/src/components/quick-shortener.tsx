@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuickShorten } from "@/hooks/use-links";
 import type { LinkResponse } from "@/lib/validators/link";
 import { createLinkSchema } from "@/lib/validators/link";
-import { useAuth } from "@/hooks/use-auth";
 import { AuthModal } from "./auth-modal";
-import { useQuickShorten } from "@/hooks/use-links";
 
 export function QuickShortener() {
   const { isAuthenticated } = useAuth();
@@ -36,7 +36,7 @@ export function QuickShortener() {
       const data = await quickShorten(url);
       setResult(data);
       toast.success("Link shortened successfully!");
-    } catch (err) {
+    } catch (_err) {
       // Error handled by hook toast
     }
   };

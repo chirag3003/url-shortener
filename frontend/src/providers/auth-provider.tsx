@@ -1,16 +1,10 @@
 "use client";
 
-import { authService } from "@/services/auth.service";
-import type { UserResponse } from "@/lib/validators/user";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
 import { useRouter } from "next/navigation";
+import { createContext, useCallback, useEffect, useState } from "react";
+import type { UserResponse } from "@/lib/validators/user";
+import { authService } from "@/services/auth.service";
 
 interface AuthContextType {
   user: UserResponse | null;

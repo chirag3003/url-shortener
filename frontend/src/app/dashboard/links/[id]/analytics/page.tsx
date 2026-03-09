@@ -1,15 +1,15 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useLink } from "@/hooks/use-links";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useAnalyticsSummary,
   useAnalyticsTimeSeries,
 } from "@/hooks/use-analytics";
+import { useLink } from "@/hooks/use-links";
 import { Breakdowns } from "./_components/breakdowns";
 import { ClicksChart } from "./_components/clicks-chart";
 import { SummaryCards } from "./_components/summary-cards";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AnalyticsPage() {
   const { id } = useParams<{ id: string }>();

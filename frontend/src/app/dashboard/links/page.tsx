@@ -1,10 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { CreateLinkModal } from "@/components/create-link-modal";
-import { useLinks, useDeleteLink } from "@/hooks/use-links";
-import { LinksTableSkeleton } from "./_components/links-skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useDeleteLink, useLinks } from "@/hooks/use-links";
 import type { LinkResponse } from "@/lib/validators/link";
 import { LinksHeader } from "./_components/links-header";
+import { LinksTableSkeleton } from "./_components/links-skeleton";
 import { LinksTable } from "./_components/links-table";
 
 // ── Empty State ──────────────────────────────────────────────────────────

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { AreaChart } from "@/components/charts/area-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ClicksChartProps {
   timeSeriesData: {

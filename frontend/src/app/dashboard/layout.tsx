@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ProtectedRoute } from "@/components/layout/protected-route";
 import { ThemeToggle } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -11,7 +12,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ProtectedRoute } from "@/components/layout/protected-route";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 

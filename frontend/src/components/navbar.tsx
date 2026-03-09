@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AuthModal } from "@/components/auth-modal";
 import { useTheme } from "@/components/theme-provider";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 
 export function ThemeToggle() {

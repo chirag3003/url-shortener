@@ -1,7 +1,7 @@
 import { DonutChart } from "@/components/charts/donut-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFullLinkAnalytics } from "@/hooks/use-analytics";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFullLinkAnalytics } from "@/hooks/use-analytics";
 
 const countryFlags: Record<string, string> = {
   "United States": "🇺🇸",
@@ -61,7 +61,7 @@ export function Breakdowns({ id }: { id: string }) {
             </div>
           ) : (
             <div className="space-y-3">
-              {referrers.map((item, idx) => {
+              {referrers.map((item, _idx) => {
                 const maxCount = referrers[0].count;
                 const pct = (item.count / maxCount) * 100;
                 return (
