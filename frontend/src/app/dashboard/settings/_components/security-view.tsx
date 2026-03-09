@@ -43,7 +43,9 @@ export function SecurityView() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to update password");
+      const message =
+        error.response?.data?.error?.message || "Failed to update password";
+      toast.error(message);
     } finally {
       setLoading(false);
     }

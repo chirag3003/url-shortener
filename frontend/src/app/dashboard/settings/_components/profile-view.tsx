@@ -33,7 +33,9 @@ export function ProfileView() {
       await refreshUser();
       toast.success("Profile updated!");
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to update profile");
+      const message =
+        error.response?.data?.error?.message || "Failed to update profile";
+      toast.error(message);
     } finally {
       setSaving(false);
     }
