@@ -40,7 +40,6 @@ func ConnectPostgres(cfg *config.Config, log zerolog.Logger) (Connection, error)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	fmt.Println("Database URL", cfg.DatabaseURL)
 	poolCfg, err := pgxpool.ParseConfig(cfg.DatabaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("parsing database url: %w", err)
