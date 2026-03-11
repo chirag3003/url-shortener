@@ -30,7 +30,6 @@ export function CreateLinkModal({
   const { mutateAsync: createLink, isPending: loading } = useCreateLink();
   const [result, setResult] = useState<LinkResponse | null>(null);
   const [copied, setCopied] = useState(false);
-  const [showUtm, setShowUtm] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [values, setValues] = useState({
@@ -66,19 +65,6 @@ export function CreateLinkModal({
     }
   }, 500);
 
-  const buildPreviewUrl = () => {
-    if (!values.longUrl) return "";
-    try {
-      const url = new URL(values.longUrl);
-      if (utm.source) url.searchParams.set("utm_source", utm.source);
-      if (utm.medium) url.searchParams.set("utm_medium", utm.medium);
-      if (utm.campaign) url.searchParams.set("utm_campaign", utm.campaign);
-      return url.toString();
-    } catch {
-      return values.longUrl;
-    }
-  };
-
   const handleAliasChange = (alias: string) => {
     setValues((v) => ({ ...v, customAlias: alias }));
     checkAlias(alias);
@@ -88,7 +74,7 @@ export function CreateLinkModal({
     e.preventDefault();
     setErrors({});
 
-    const finalUrl = showUtm ? buildPreviewUrl() : values.longUrl;
+    const finalUrl = values.longUrl;
     const payload = { ...values, longUrl: finalUrl };
 
     const parsed = createLinkSchema.safeParse(payload);
@@ -138,7 +124,6 @@ export function CreateLinkModal({
         setCopied(false);
         setErrors({});
         setAliasStatus("idle");
-        setShowUtm(false);
         setValues({
           longUrl: "",
           customAlias: "",
@@ -369,66 +354,6 @@ export function CreateLinkModal({
             </div>
 
             {/* UTM Builder Toggle */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowUtm(!showUtm)}
-                className="flex items-center gap-2 text-sm font-medium text-primary hover:underline underline-offset-4"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`transition-transform ${showUtm ? "rotate-90" : ""}`}
-                >
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-                UTM Parameters
-              </button>
-
-              {showUtm && (
-                <div className="mt-3 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <Input
-                    placeholder="Source (e.g. twitter)"
-                    value={utm.source}
-                    onChange={(e) =>
-                      setUtm((u) => ({ ...u, source: e.target.value }))
-                    }
-                  />
-                  <Input
-                    placeholder="Medium (e.g. social)"
-                    value={utm.medium}
-                    onChange={(e) =>
-                      setUtm((u) => ({ ...u, medium: e.target.value }))
-                    }
-                  />
-                  <Input
-                    placeholder="Campaign (e.g. launch-2026)"
-                    value={utm.campaign}
-                    onChange={(e) =>
-                      setUtm((u) => ({ ...u, campaign: e.target.value }))
-                    }
-                  />
-                  {(utm.source || utm.medium || utm.campaign) && (
-                    <div className="rounded-lg bg-muted/50 p-3">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Preview URL
-                      </p>
-                      <p className="text-xs font-mono break-all">
-                        {buildPreviewUrl()}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
             <Button
               type="submit"
               className="w-full h-11 font-semibold rounded-xl"
